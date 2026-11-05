@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - rest/rest-deployment.yaml
+  - worker/worker-deployment.yaml
+
+images:
+  - name: demucs-rest
+    newName: us-central1-docker.pkg.dev/dcsc-fall26-ucb/lab7-demucs/demucs-rest
+    newTag: v1
+  - name: demucs-worker
+    newName: us-central1-docker.pkg.dev/dcsc-fall26-ucb/lab7-demucs/demucs-worker
+    newTag: v1
+
+patches:
+  - target:
+      kind: Deployment
+      name: rest-server
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/imagePullPolicy
+        value: IfNotPresent
+  - target:
+      kind: Deployment
+      name: worker
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/imagePullPolicy
+        value: IfNotPresent
